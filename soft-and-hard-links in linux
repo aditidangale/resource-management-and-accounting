@@ -1,0 +1,61 @@
+-  A link in  UNIX is a pointer to a file like pointers in any programming languages , link , in UNIX are pointers pointing to a file or a directory.
+-  creating links is a kind of shortcuts to access a file.
+-  links allow more than one file name tom refer to the same file , elsewhere
+
+        there are 2 types of links
+        a) soft-links or symbolic links
+        b) hard links
+
+-  these links behave differently when the source of the link (what is being linked to) is moved or removed.
+-  symbolic links are not updated(they merely contain a string which is the path main of it's target); hard links always refer to the source ,
+      even if moved or removed.
+
+   for example , if we have a file a.txt .  if we create a hard link to the file and then delete the file , we can still access the file using
+                 hard-link . 
+                 but if we create a soft link of the file and then delete the file we can't access the file through soft link and sofft link
+                 becomes danglig .
+                 basically hard link increases refernce count of a location while soft links work as a shortcut(like in windows).
+
+
+     hard - links
+         -  each hard-linked file is a assigned the same Inode value as the original , therefore they reference the same physical file location .
+         -  hard-links more flexible and remain linked even if the original or linked files are moved throughout the file system, althought 
+             hard-links aree unable to cross difference file systems.
+         -  ls -l command shows all the links with the link column shows number of links.
+         -  links have actual file contents.
+         -  removing any link just reduces the link count , but doesn't affect other links.
+         -  even if we change the filename of the original file then also the hard links properly work.
+         -  we cannot create a hard link for a directory to avoid recursive loops.
+         -  if original file is removed then the link will still show the content of the file.
+         -  the size of any of the hard link file is same as the original file and if we change the content in any of the hard-links the size 
+             of all hard links files are updated.
+         -  the dis-advantage of hard-links is that it cannot be created for files on diff file systems and it cannot be created for special 
+              files or directories.
+         -  command to create a hard links : 
+               ln [original filename] [link name]
+
+
+        soft - links 
+          -  a soft link is similar to the file shortcut feature which is used in windows os.
+          -  each soft linked file contains a seperate Inode value that points to the original file.
+          -  as similar to hard disk , any changes to the data in either file is reflected in the other.   
+          -  soft links can be linked across diff file systems , althought if the original file is deleted or moved , the soft linked file
+                   will not work correctly (called hanging link) . 
+          -  ls -l command shows all links with first column value l ? and the link points to original file . 
+          -  soft link contains the path for original file and not the contents.
+          -  removing soft link doesn't affect anything but removing original file , the link becomes "dangling" link which points to non-existent
+                  file.
+          -  a soft link can link to a directory . 
+          -  the size of the soft link is equal to the length of the path of the original file we gave .
+               eg . if we link a file like
+               ln -s /tmp/hello.txt /tmp/link.txt then the size of the file will be 14bytes which is equal to the length of the "/tmp/hello.txt"
+          -   if we change the name of the original file then all the soft links for that file become dangling i.e they are worthless now  
+          -   link across file system : if you want to link file across the file systems, you can only use symlinks / softlinks.
+
+              syntax : ln -s [original filename] [link name]
+ 
+
+
+
+         
+     
