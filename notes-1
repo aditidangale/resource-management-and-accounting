@@ -1,0 +1,127 @@
+  set and export command 
+      a) set
+           It is used to set or unset specific flags and settings(determines the behavior of the script and helps in executing the 
+           tasks without any issue.) inside the shell environment. It can be used to change or display the shell attributes and parameters. 
+           syntax  :  set -options arguments
+           example :  This option prints the commands in the sequence as they got executed or is mainly used to do some script debugging..
+                       Code:
+
+          set -x
+          echo Hello
+          echo Romy
+
+          Output:
+          bar
+          hello
+          Romy
+          + echo bar
+          + echo hello
+          + echo Romy
+
+
+      b) export
+         export is bash shell BUILTINS commands, which means it is part of the shell. It marks an environment variables to be exported to 
+         child-processes. Export is defined in POSIX as The shell shall give the export attribute to the variables corresponding to the 
+         specified names, which shall cause them to be in the environment of subsequently executed commands. If the name of a variable is
+         followed by = word, then the value of that variable shall be set to the word.
+         In simple terms, environment variables are set when you open a new shell session. at any time if you change any of the variable values,
+         the shell has no way of picking that change. The export command, on the other hand, provides the ability to update the current shell
+         session about the change you made to the exported variable. You don’t have to wait until new shell session to use the value of the
+         variable you changed.
+         Syntax : export [-f] [-n] [name[=value] ...] or export -p
+                         and
+                 -p : To view all exported variables on current shell.
+                 syntax :  $ export -p
+
+
+        Q] what is login interactive shell
+        ->  An interactive shell in Linux is a shell that allows you to type commands and receive output from those commands. 
+            This is essentially a shell with which you interact. Examples include your login shell and any other shells you start manually.
+
+            A shell gives us an interface to the Unix system. While using an operating system, we indirectly interact with the shell. 
+            On Linux distribution systems, each time we use a terminal, we interact with the shell. The job of the shell is to interpret or 
+            analyze the Unix commands given by users. A shell accepts commands from the user and transforms them into a form that is understandable
+            to the kernel. In other words, it acts as a mediator between ta user and the kernel unit of the operating system.
+
+          - Some of the features of a shell are listed below:
+               Wildcard substitution in file names (pattern-matching)
+               Command history
+               Filename substitution
+               Piping
+
+              For example, a bash shell is an interactive shell. 
+
+              How to start an interactive shell?
+             -> We can start an interactive shell by giving the name of the shell after we logged into the system.
+                For example,
+                  bash
+                  This will start bash shell.
+                  
+                Non-interactive shell:
+                  As the name implies, a non-interactive shell is a type of shell that doesn’t interact with the user. We can run it through 
+                  a script or similar. Also, it can be run through some automated process. In this case  .bashrc and .profile files do not get 
+                  executed. The non-interactive shell influences the PATH variable. It is highly recommended to use the full path for a command 
+                  in non-interactive shells. Non-interactive scripts can smoothly run in the background easily. This shell is generally a 
+                  non-login shell because the calling user has logged in already. A shell that runs a script is always considered a 
+                  non-interactive shell.
+
+                  Scripts like Init and startup are considered non-interactive since they must run without human intervention.
+        
+
+          Q]  what is inter-active non-login shell
+          -> By interactive non-login shells we refer to any other shells opened by the user after logging into the system. Users use these 
+             shells during sessions to carry out maintenance and administrative tasks such as setting variables, the time, copying files, writing 
+             scripts, etc.
+             A shell gives us an interface to the Unix system. While using an operating system, we indirectly interact with the shell. 
+             On Linux distribution systems, each time we use a terminal, we interact with the shell. The job of the shell is to interpret or 
+             analyze the Unix commands given by users. A shell accepts commands from the user and transforms them into a form that is 
+             understandable to the kernel. In other words, it acts as a mediator between ta user and the kernel unit of the operating system.
+
+            Some of the features of a shell are listed below:
+
+                  Wildcard substitution in file names (pattern-matching)
+                  Command history
+                  Filename substitution
+                  Piping
+
+             
+             The difference is that with login shell, you load the profile of the submission user whereas the non-login shell it will load the
+             default environment. By default, the Shell parameter is empty so it will use the non-login shell.
+
+
+
+
+
+
+      =============================================   NFS   ========================================================
+
+          NFS allows a system to share directories and files with others over a network. 
+          By using NFS, users and programs can access files on remote systems almost as if they were local files.
+
+          Network File System (NFS) is a protocol that allows Linux clients to share files and directories over a network. 
+          It's a client-server architecture where the server exports directories to clients, who can then mount the 
+          directories. NFS is useful when disk space is limited and public data needs to be exchanged between client computers. 
+
+          NFS is built-in to Red Hat Enterprise Linux (RHEL) 9, but it can also be installed on the NFS host computer and the
+          Linux workstations that will use NFS. To configure NFS in Linux, you can: Enable and start the NFS service with the 
+          command sudo systemctl enable --now nfs-server Create a location on the filesystem to share with client computers
+          with the command sudo mkdir -p /nfs/exports/myshare
+
+          NFS is known for its fast performance and low overhead. It offers several benefits, including: Centralized data storage,
+          Increased efficiency, Data security, Scalability, and Local workstations use less disk space. 
+          However, NFS isn't a good choice for sharing sensitive data over public networks and doesn't support hierarchical
+          storage management.
+
+          The Network File System (NFS) is a mechanism for storing files on a network. It is a distributed file system that 
+          allows users to access files and directories located on remote computers and treat those files and directories as
+          if they were local. 
+
+
+
+
+
+
+
+
+
+
