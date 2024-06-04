@@ -1,0 +1,74 @@
+      Slurm Banking is a feature within the Slurm workload manager that allows for the allocation and tracking of resource usage against specific 
+      accounts, enabling fair resource distribution and usage accountability. This system is particularly useful in multi-user, multi-group 
+      environments where resources such as CPU hours, memory, and GPU usage need to be managed and allocated efficiently. 
+
+
+    -  Key Concepts of Slurm Banking
+      1.  Accounts and Associations:
+                Accounts: Represent entities (e.g., departments, projects, or groups) to which resources are allocated.
+                Associations: Define the relationships between users, accounts, and resources. Each user can belong to one or more accounts, 
+                and associations can have specific resource limits or priorities.
+
+      2.  Fairshare:
+
+                Fairshare Factor: A metric used by Slurm to prioritize job scheduling based on historical resource usage. Users or accounts 
+                that have consumed fewer resources recently are given higher priority.
+                Fairshare Tree: A hierarchical structure representing the accounts and their associations, which is used to calculate fairshare 
+                factors.
+                
+      3.  Limits and QoS:
+
+                Resource Limits: Constraints on the amount of resources (e.g., CPU hours, memory) an account or user can consume.
+                Quality of Service (QoS): A mechanism to define different levels of service for jobs, which can include limits on job runtime, 
+                priority adjustments, and other scheduling policies.
+
+      4.   Accounting and Reporting:
+
+                SlurmDBD: The Slurm Database Daemon (SlurmDBD) is responsible for managing accounting records and providing interfaces for 
+                querying resource usage.
+                Accounting Tools: Tools such as sacct and sreport are used to generate detailed reports on resource usage and enforce accounting
+                policies.
+
+
+     -   Setting Up Slurm Banking
+       1.  Configuration:
+
+         slurm.conf:
+              The main configuration file where you define general Slurm settings, including enabling the accounting storage.
+              AccountingStorage: Set up the accounting storage backend, typically using AccountingStorageType=accounting_storage/slurmdbd.
+              SlurmDBD Configuration: Configure the Slurm Database Daemon with appropriate database settings (e.g., MySQL or MariaDB).
+
+       2.  Creating Accounts and Associations:
+
+              sacctmgr: The Slurm Account Manager tool is used to create and manage accounts and associations.
+    
+              sacctmgr add account name=project1 Description="Project 1"
+              sacctmgr add user name=jdoe account=project1   
+
+       3.   Defining Fairshare Policies:
+
+              Fairshare Configuration: Define fairshare policies in the slurm.conf file to ensure equitable resource distribution.
+              
+              PriorityType=priority/multifactor
+              PriorityWeightFairshare=100000
+
+       4.     Enforcing Limits and QoS:
+
+                sacctmgr: Use the sacctmgr tool to set resource limits and QoS for accounts and users.
+                
+                sacctmgr modify account name=project1 set GrpCPUMins=100000
+                sacctmgr create qos name=highpriority MaxWall=24:00:00
+
+
+
+     - Benefits of Slurm Banking
+           Resource Accountability: 
+                          Ensures that resources are allocated and used according to predefined policies, promoting fair usage.
+           Prioritization: 
+                          Uses fairshare policies to prioritize jobs based on historical usage, helping to prevent resource hogging.
+           Flexibility: 
+                          Allows administrators to set up complex hierarchies and policies to manage resource allocation effectively.
+           Reporting: 
+                          Provides detailed usage reports to track resource consumption and aid in capacity planning and billing.
+                
+                
