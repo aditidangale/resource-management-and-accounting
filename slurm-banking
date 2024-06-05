@@ -72,3 +72,73 @@
                           Provides detailed usage reports to track resource consumption and aid in capacity planning and billing.
                 
                 
+
+
+      -   Alternative software solutions:
+            Moab (commercial)
+            Sun Grid Engine (forks?)
+            Torque + Maui + GOLD
+
+
+     torque :
+                TORQUE (Terascale Open-source Resource and Queue Manager) is a job scheduler and resource manager that uses PBS to control batch 
+                jobs and distributed computing resources. It's based on the original PBS project, developed by NASA, LLNL, and MRJ, and is used 
+                at many government, academic, and commercial sites. 
+
+                TORQUE manages jobs that users submit to various queues on a computer system, with each queue representing a group of resources.
+                To run a job in batch mode using TORQUE, users can:
+                       *  Prepare a job script that specifies the application and resources required to run it.
+                       *  Submit the script to TORQUE using the qsub command.
+
+                The PBS batch script starts by telling TORQUE what kind of resources are being requested, including things like wall time, 
+                nodes, and processors. To get a complete list of options available, users can type man qsub from the command prompt when logged
+                in to a machine
+
+               TORQUE) is a job scheduler/resource manager that employs PBS. Jobs can be run either interactively or as a submitted PVS batch 
+               script that is run non-interactively and subsequently controlled through TORQUE.
+
+     MAUI   :  
+               Maui is an advanced cluster scheduler that can be used as an external scheduler for the PBS resource management system. 
+               It's used to improve the efficiency and control of supercomputer and cluster resources by making decisions about when, where,
+               and how to run jobs. Maui does this by querying and controlling a resource management system, such as PBSPro, OpenPBS,
+               Loadleveler, or SGE, and enforcing its decisions based on a set of configurable policies, priorities, and limits.
+
+               Maui can be used in PBS by installing PBS and then untarring the Maui distribution file. Once installed, Maui can be used to
+               drive PBS via the PBS scheduling API. 
+
+               Maui can be used as an external scheduler for the PBS resource management system. In this configuration, PBS manages the job 
+               queue and the compute resources while Maui queries the PBS Server and the PBS MOM's to obtain up to date job and node information.
+
+    GOLD     :
+               In the context of PBS (Portable Batch System) and HPC (High-Performance Computing) environments, GOLD refers to a resource
+               management and accounting system used to track and allocate resource usage, such as CPU time, memory, and storage. GOLD is 
+               particularly valuable for environments that require precise tracking and accounting of resource usage for billing, quotas, or 
+               usage policies.
+
+
+
+
+================================================================================================================================================
+
+         PBS
+        
+        PBS stands for Portable Batch System, and Slurm stands for Simple Linux Utility for Resource Management. Both are job schedulers that
+        request resources on multi-user clusters. PBS allocates computational tasks, or batch jobs, among available computing resources. 
+        Slurm manages and schedules jobs submitted to clusters. 
+
+        PBS and Slurm submission scripts both start with directives that provide the scheduler with information about the job and request 
+        resources. PBS directives start with #PBS, while Slurm directives start with #SBATCH. Common directives for PBS include jobname, queue, 
+        processor count, and output file. 
+
+        In general, a PBS batch script that is a bash or csh script will work in Slurm, and Slurm will try to convert PBS directives 
+        appropriately. For example, a PBS “queue” is equivalent to a SLURM “partition”. However, PBS Environment variables 
+        (e.g. cd $PBS_O_WORKDIR) will not be converted by Slurm. For more complicated scripts, or for batch scripts for parallel jobs, you 
+         should rewrite them in Slurm syntax. 
+
+        (PBS) and  (Slurm) are two of the most popular job schedulers used for requesting resources allocations on a multi user cluster.
+
+
+
+
+
+
