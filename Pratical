@@ -1,0 +1,167 @@
+-   to create a partition use below command
+        go in                  cd /opt/slurm-2-1../etc
+        then                   nano slurm.conf
+        add this line          PartitionName=testp Nodes=ALL MaxTime=INFINITE state=UP 
+        instead of Nodes all you can add the specific node for example below
+            PartitionName=testp Nodes=compute1,compute2 MaxTime=INFINITE state=UP  
+
+ -   use the below command to the partition
+      scontrol show partition
+
+-     to see a sepecific partition use below command
+      scontrol show partition testp
+
+
+
+  - srun command
+        srun -N 1 -n 1 --time=:05:00 --pty /bin/bash
+
+  
+  - sbatch command
+        sbatch job script
+        nano job.sh
+          #! /bin/bash
+          #SBATCH -N 1
+          #SBATCH --ntask-per-node=1
+          #SBATCH -p testp
+          #SBATCH --time=00:05:00
+          #SBATCH --error=job.%J.err
+          #SBATCH --output=job.%J.out
+
+          cd $SLURM_SUBMIT_DIR
+
+          echo "starting at `date`"
+          echo "Running on hosts: $SLURM_NODELISTS"
+          echo "hello"
+
+          python3 /nfs/dhpcsa/aditi/add.py                                 ...   add your own path here
+
+     -     to run this sbatch job use below command
+            sbatch job.sh                                                  ..  job.sh    is a file name                                                 
+            squeue
+            sacct
+
+
+
+    -  to create a association use below command
+         sacctmgr add account "chemistry-acc" Description=" this is a demo description" Organization=C-DAC
+
+    -  to see the association use below command
+         sacctmgr show assoc
+
+    -  to create a user and add that user in the account(chemisrty-acc)  use below command
+         sacctmgr create user name=dhpcsa DefaultAccount=chemistry-acc  
+
+    -  to delete a specific user from an account
+         sacctmgr delete user name=dhpcsa DefaultAccount="chemistry-acc"
+
+    -  to see at specific format usse below command
+         sacctmgr show assoc where Account=chemistry-acc format=account%15,user%15
+
+
+
+
+       QOS
+  -    sacctmgr show qos format=name,priority
+  -    sacctmgr show qos
+  -    sacctmgr add qos zebra                            .................   add qos zebra
+       
+       setting the qos priority
+ -     sacctmgr modify qos zebra set priority=10         .................   setting the qos zebra to priority 10
+ -     sacctmgr show qos format=name,priority
+
+       set some other limits
+ -     sacctmgr modify qos zebra sset GrepTRES=cpu=24
+ -     sacctmgr show qos format=name,priority,GrpTRES
+
+       add a qos to a user account
+ -     sacctmgr modify user crock set qos=zebra
+ -     sacctmgr show assoc format=cluster,usser,qos
+
+
+-     sacctmgr modify user hpcsa set Maxjobs=2
+
+
+
+=============================================================================================================================================
+ 
+ - create a group rma with group_id 20000
+      groupadd -g 20000 rma
+
+-  create a user
+      useradd -u 20001 -g 20000 -m -d /nfs/rma_lab -s /bin/bash rma_lab
+
+-  to see the user create use below command
+      cat /etc/passwd
+
+-   ssh-keygen -t rsa
+-   cd .shh
+-   touch authorized_keys && chomd 600 authorized_keys && cp is_rsa.pub authorized_keys
+
+-   now create a association(project)
+    after creation of association , add the rma_lab user to this association
+    sacctmgr add account "rmalab-acc" Description="this is for testing purpose" Organization=C-DAC         .... creating an account
+    sacctmgr add user name=rma_lab DefaultAccount=rmalab-acc                                            .... creating an user and adding to acc
+
+-   now only allow rma_lab group and rest all should be deny (group) partition
+    cd /opt/sslurm-21../etc/
+    nano slurm.conf
+           PartitionName=testp Nodes=ALL Default=yes MAXTIME=INFINITE DenyAccounts=chemistry-acc AllowGroups=rma state=UP
+
+
+-  now login with diff shell and try to run the job
+    su - dhpcsa                                           ............ give your usernaame
+    srun -N 1 -n 1 --time=05:00 ---pty /bin/bash
+    squeue
+
+
+
+=============================================================================================================================================
+
+                                      Reservation
+
+scontrol create reservation starttime=2024-06-04T16:00:00 duration 120 user=dhpcsa flags=maint,ignore_jobs nodes=ALL
+scontrol show res
+srun --nodes=1 --reservation=root_9 --time=00:10:00 --pty /bin/bash              .............   --reservation=root_9      reservation name  
+squeue
+
+-   update
+    scontrol update ReservationName=root_9 user=root,dhpcsa                      ..............    allowing the two user and resrticting others user
+    su - dhpcsa
+    srun --nodes=1 --reservation=root_9 --time=03:00 --pty /bin/bash
+    squeue
+
+    scontrol update ReservationName=root_9 endtime=2024-06-04T12:45:00 
+    scontrol create reservation ReservationName=rma starttime=now duration=60 user=root flags=MAINT,ignore_jobs nodes=ALL
+    scontrol show res
+
+
+     -   create a reservation with the id "rma" and exclude the root user(this reservation should not be used by the root user)
+          scontrol update ReservationName=rma user=-root
+          scontrol show reservation
+          squeue
+
+    -    reservation two compute nodes for an indefinite period to users "root" and "dhpcsa"
+            scontrol create reservation ReservationName=reserve_lab starttime=now duration=INFINITE user=root,dhpcsa flags=maint,ignore_jobs nodes=ALL
+            scontrol  show reservation
+
+    -    reservation two nodes in the default slurm partition starting at noon and with a duration of 60  min accuring daily
+            scontrol create reservation name=mydailyres nodes=2 starttime=2024-06-06T12:00:00 duration=01:00:00 flags=REPEAT
+
+
+    -    create a reservation is created for account "chemistry-acc" , but user "dhpcsa2" is prevented from using the reservation even when using the 
+         account "chemisrty-acc"
+              sacctmgr show assoc
+              sacctmgr add user name=dhpcsa2 account=chemistry-acc         ..... first added the dhpcsa2 to a chemisrty-acc 
+              sacctmgr show assoc
+              scontrol create reservation ReservationName=reser_3 account=chemisrty-acc user=-dhpcsa2 starttime=now duration=60 flags=maint,ignore_jobs nodes=ALL
+
+            now check by login diff user and as well as root
+
+   -      reservation perging after last job
+            scontrol update reservation ReservationName=reserv_3 flags=purge_comp
+            su - dhpcsa
+            srun -N 1 -n 1 --reservation=reserv_3 --time=02:00 --pty /bin/bash
+            squeue
+            scontrol show res 
+            
