@@ -127,8 +127,8 @@ squeue
 
 -   update
     scontrol update ReservationName=root_9 user=root,dhpcsa                      ..............    allowing the two user and resrticting others user
-    su - dhpcsa
-    srun --nodes=1 --reservation=root_9 --time=03:00 --pty /bin/bash
+      su - dhpcsa
+      srun --nodes=1 --reservation=root_9 --time=03:00 --pty /bin/bash
     squeue
 
     scontrol update ReservationName=root_9 endtime=2024-06-04T12:45:00 
@@ -164,4 +164,135 @@ squeue
             srun -N 1 -n 1 --reservation=reserv_3 --time=02:00 --pty /bin/bash
             squeue
             scontrol show res 
-            
+
+
+============================================================================================================================================
+
+        Q1]  create  a slurm partition called "nova" and make one compute node as the part of it and also make this partition as deafult
+             and assign maxwall time "25"days and the default time of 30 hours for this partition .And allow group "rma" and allow account 
+             "rmalab-acc" to submit and manage jobs in this partition.
+         ->   
+                in master
+                    cd /opt/slurm-21.08.8/etc
+                    nano slurm.conf
+                           .... edit this file
+                       PartitionName=nova Nodes=compute-1 Default=YES MaxTime=25-00:00:00 DefaultTime=30:00:00 AllowGroups=rma AllowAccount=rmalab-acc State=UP    
+                    scontrol show partition
+                    sinfo
+
+                     allowgroups=rma and allowaccount=rmalab-acc both should be first available .
+                     and also make changes in compute file slurm.conf
+                     and after changes in file , restart the services
+
+
+       Q2] create reservation with name "reserve_lab" for the default partition "nova" with all nodes in that partition and with a duration of 
+           90 minutes and this reservation should be accessible by the account "rmalab-acc" . submit a sample interactive job using this 
+           reservation by the "hpcsa1" user.
+        ->   
+               scontrol create reservation ReservationName=reserve_lab partition=nova starttime=now duration=90 account=rmalab-acc 
+
+                -now login the your user for example hpcsa
+                     su - hpcsa1
+               - no running t he job by using the srun command
+                     srun -N 1 -n 1 --reservationname=reserve_lab --pty /bin/bash
+                squeue     
+                sacct
+
+                        or
+                groupadd -g 20000 rma
+                useradd -u 20000 -g 20000 -m -d /nfs/rma_lab -s /bin/bash rma_lab
+                cat /etc/passwd
+
+                ssh-keygen -t rsa
+                .ssh 
+                touch authorized_keys && chmod 600 authorized_keys && cp id_rsa.pub authorized_keys
+
+                scontrol create reservation ReservationName=reserve_lab partition=nova starttime=now duration=90 account=rmalab-acc 
+
+                -now login the your user for example hpcsa
+                     su - hpcsa1
+               - no running t he job by using the srun command
+                     srun -N 1 -n 1 --reservationname=reserve_lab --pty /bin/bash
+                squeue     
+                sacct
+
+
+
+       Q3] create slurm-account name "quantum-acc" and add "hpcsa1" user to the "quantum-acc" account and make "quantum-acc" as the default 
+           account of the "hpcsa1" user and set maximum jobs of the "hpcsa1" user as 15 and the submit the simple interactive job by specifying 
+           the account "quantum-acc" in that interactive job.
+        -> 
+                sacctmgr add account "quantum-acc" Description="this is for testing" Organization=C-DAC          ......   account add or create
+                sacctmgr add user name=hpcsa1 DefaultAccount=quantum-acc              .... adding hpcsa1 user to account=quantum-acc
+                sacctmgr modify user hpcsa1 set MaxJobs=15
+                sacctmgr show assoc
+                sacctmgr show assoc where account=quantum-acc format=account%15,user%25,MaxJobs%15
+
+                -   login with the hpcsa1 user
+                      su - hpcsa1
+                -   run the job by srun command
+                      srun -N 1 -n 1 --account=quantum-acc --time=05:00 --pty /bin/bash   
+                    squeue
+                    sacct
+
+
+          Q4]  Apply QOS to prevent users from submiting a job that utilizes more than one node
+           ->  sacctmgr create qos zebra
+                    or
+               sacctmgr add qos zebra
+
+               sacctmgr show qos
+               sacctmgr modify qos where qos=zebra set MaxTRES=node=5 
+               show show qos
+               sacctmgr modify user name=hpcsa1 qos qos=zebra 
+
+
+=============================================================================================================================================
+
+    Q1]  create a slurm partition called "scavenger" and make one compute node as part of it and also make this partition as default and assign 
+         maxwall time "31" days and the default time of 1 hour for this partition and also "disable root jobs" for this partition.
+    ->  
+             in master
+                    cd /opt/slurm-21.08.8/etc
+                    nano slurm.conf
+                           .... edit this file
+                       PartitionName=scavenger Nodes=compute-1 Default=YES MaxTime=31-00:00:00 DefaultTime=01:00:00 DisableRootJobs=YES state=UP    
+                    scontrol show partition
+                    sinfo
+
+                     and also make changes in compute file slurm.conf
+                     and after changes in file , restart the services
+
+
+
+     Q2]   create reservation with the name "reserve_lab" for the default partition "scavenger" with all nodes in that partition and with a 
+           duration of 60 min and prevent "root" user from using the reservation.
+      -> 
+                  scontrol create reservation ReservationName=reserve_lab partition=scavenger starttime=now duration=60 user=-root
+                  scontrol show res
+
+
+     Q3]   report basic node and individual partition summary information.
+     ->   
+            scontrol show nodes
+            scontrol show partition
+
+
+
+     Q4]    create a slurm account named "testfacl-acc" and add "hpcsa1" user to the "testfacl-acc" account and submit the simple batch job by 
+            specifying the account "testfacl-acc" in that batchjob.
+     -> 
+               sacctmgr add account "testfacl-acc" Description="this is for testing" Organization=C-DAC
+               sacctmgr add user name=hpcsa1 DefaultAccount=testfacl-acc
+               sacctmgr show assoc
+
+                -   login with the hpcsa1 user
+                      su - hpcsa1
+                -   run the job by srun command
+                      srun -N 1 -n 1 --account=testfacl-acc --time=05:00 --pty /bin/bash   
+                    squeue
+                    sacct
+
+
+===============================================================================================================================================
+
