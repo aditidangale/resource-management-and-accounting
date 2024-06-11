@@ -296,3 +296,14 @@ squeue
 
 ===============================================================================================================================================
 
+     sreport
+
+   -    sreport user top
+   -    sreport cluster utilization 
+   -    sreport job sizesbyaccount
+   -    sreport user top start=11/06/2024 end=05/07/2024
+   -    sreport job sizesbyaccount All_clusters users=hpcsa account=chemistry-acc PrintJobCount
+   -    sreport cluster AccountUtilizationByUser cluster=cluster user=dhpcsa start=11/06/2024 end=5/07/2024 format=Accounts,cluster,TresCount,login,Proper,Used
+
+
+
